@@ -1,8 +1,8 @@
-set_project("Capslang")
-set_version("0.0.1")
+set_project("CapsLang")
+set_version("1.0.0")
 set_xmakever("2.8.0")
 
-add_languages("cxx23", "c23")
+add_languages("c99")
 set_allowedplats("windows")
 set_allowedarchs("x64")
 set_allowedmodes("release", "debug")
@@ -13,6 +13,7 @@ set_policy("check.auto_map_flags",      true)
 set_policy("build.ccache",              true)
 set_policy("build.warning",             true)
 set_policy("build.optimization.lto",    false)
+
 
 rule("build.mode.params")
     after_load(function (target)
@@ -38,4 +39,25 @@ rule("build.mode.params")
 rule_end()
 
 
-includes("src")
+target("capslang")
+    set_kind("binary")
+    set_installdir("$(projectdir)/build/install")
+
+    add_rules("build.mode.params")
+    set_values("platform.windows.subsystem", "windows")
+    add_syslinks("kernel32", "user32", "gdi32")
+
+    add_files("src/capslang.c")
+target_end()
+
+-- target("caps-mini")
+--     set_kind("binary")
+--     set_installdir("$(projectdir)/build/install")
+
+--     add_rules("build.mode.params")
+--     set_values("platform.windows.subsystem", "windows")
+--     add_syslinks("kernel32", "user32", "gdi32")
+
+--     add_files("src/caps-mini.c")
+-- target_end()
+
