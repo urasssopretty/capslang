@@ -79,45 +79,45 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, LPSTR cmd, int show)
 
 LRESULT CALLBACK keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    do
+    if (nCode != HC_ACTION)
     {
-        if (nCode != HC_ACTION) break;
+        return CallNextHookEx(keyboard_hook_handle, nCode, wParam, lParam);
+    }
 
-        const KBDLLHOOKSTRUCT* keyboard_input_info = (KBDLLHOOKSTRUCT*)lParam;
-        const int is_capslock_event = (keyboard_input_info->vkCode == CAPS_LOCK_KEY);
-        const int is_capslock_pressed = is_capslock_event && (wParam == WM_KEYDOWN);
-        const int is_shift_pressed = (GetKeyState(VK_SHIFT) < 0);
+    const KBDLLHOOKSTRUCT* keyboard_input_info = (KBDLLHOOKSTRUCT*)lParam;
+    const int is_capslock_event = (keyboard_input_info->vkCode == CAPS_LOCK_KEY);
+    const int is_capslock_pressed = is_capslock_event && (wParam == WM_KEYDOWN);
+    const int is_shift_pressed = (GetKeyState(VK_SHIFT) < 0);
 
-        // if CapsLock is pressed and Shift is NOT pressed
-        // then it is necessary to change the keyboard layout language
-        if (is_capslock_pressed && !is_shift_pressed)
-        {
-            INPUT inputs[4] = {0};
+    // if CapsLock is pressed and Shift is NOT pressed
+    // then it is necessary to change the keyboard layout language
+    if (is_capslock_pressed && !is_shift_pressed)
+    {
+        INPUT inputs[4] = {0};
 
-            // press Alt
-            inputs[0].type = INPUT_KEYBOARD;
-            inputs[0].ki.wVk = VK_MENU;
+        // press Alt
+        inputs[0].type = INPUT_KEYBOARD;
+        inputs[0].ki.wVk = VK_MENU;
 
-            // press Shift
-            inputs[1].type = INPUT_KEYBOARD;
-            inputs[1].ki.wVk = VK_SHIFT;
+        // press Shift
+        inputs[1].type = INPUT_KEYBOARD;
+        inputs[1].ki.wVk = VK_SHIFT;
 
-            // release Alt
-            inputs[2].type = INPUT_KEYBOARD;
-            inputs[2].ki.wVk = VK_MENU;
-            inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+        // release Alt
+        inputs[2].type = INPUT_KEYBOARD;
+        inputs[2].ki.wVk = VK_MENU;
+        inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
 
-            // release Shift
-            inputs[3].type = INPUT_KEYBOARD;
-            inputs[3].ki.wVk = VK_SHIFT;
-            inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+        // release Shift
+        inputs[3].type = INPUT_KEYBOARD;
+        inputs[3].ki.wVk = VK_SHIFT;
+        inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
 
-            SendInput(4, inputs, sizeof(INPUT));
+        SendInput(4, inputs, sizeof(INPUT));
 
-            // disable behavior of Caps Lock
-            return TRUE;
-        }
-    } while (FALSE);
+        // disable behavior of Caps Lock
+        return TRUE;
+    }
 
 	return CallNextHookEx(keyboard_hook_handle, nCode, wParam, lParam);
 }
