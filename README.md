@@ -1,13 +1,13 @@
 # capslang
-This small windowless program allow you swich keyboard layout with CapsLock key.  
-Usual Caps Lock behavior available via Shift + CapsLock key combination.  
+This small windowless program allow you swich keyboard layout with CapsLock key  
+Usual Caps Lock behavior available via Shift + CapsLock key combination  
 Capslang works with Windows 2000/XP or later  
 
-`capslang.exe` toggles ScrollLock LED indicator depending on keyboard layout.  
-`caps-mini.exe` doesn't change the state of the LED Scroll Lock indicator.  
+`capslang.exe` toggles ScrollLock LED indicator depending on keyboard layout  
+`caps-mini.exe` doesn't change the state of the LED Scroll Lock indicator  
 
 **Install:**  
-Copy `capslang.exe` or `caps-mini.exe` to your Startup folder (`C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs`).  
+Copy `capslang.exe` or `caps-mini.exe` to your Startup folder (`C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs`)  
 
 **Run:**  
 Just run and enjoy  
