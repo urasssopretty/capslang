@@ -14,14 +14,13 @@
 #include <windows.h>
 #include <tchar.h>
 
-
 #define EXIT 33
 #define LETTER_L_KEY 'L'
 #define CAPS_LOCK_KEY VK_CAPITAL
 #define SHIFT_KEY VK_SHIFT
 
 
-HHOOK keyboard_hook_handle;
+static HHOOK keyboard_hook_handle;
 
 
 LRESULT CALLBACK keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam);
