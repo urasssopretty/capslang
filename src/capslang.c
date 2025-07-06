@@ -23,7 +23,6 @@
 static HKL     default_layout;
 static HHOOK   keyboard_hook_handle;
 
-
 LRESULT CALLBACK keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam);
 void formatted_messagebox(const TCHAR *msg);
 void sync_scroll_lock_indicator();
@@ -88,7 +87,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, LPSTR cmd, int show)
 	return 0;
 }
 
-
 LRESULT CALLBACK keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
 {
     do
@@ -100,23 +98,37 @@ LRESULT CALLBACK keyboard_hook(int nCode, WPARAM wParam, LPARAM lParam)
         const int is_capslock_pressed = is_capslock_event && (wParam == WM_KEYDOWN);
         const int is_shift_pressed = (GetKeyState(VK_SHIFT) < 0);
 
-        // if CapsLock is NOT pressed or Shift is pressed
-        // then do nothing
-        // otherwise if CapsLock is pressed or Shift is NOT pressed
+        // if CapsLock is pressed and Shift is NOT pressed
         // then it is necessary to change the keyboard layout language
-        if (!is_capslock_pressed || is_shift_pressed) break;
+        if (is_capslock_pressed && !is_shift_pressed)
+        {
+            INPUT inputs[4] = {0};
 
+            // press Alt
+            inputs[0].type = INPUT_KEYBOARD;
+            inputs[0].ki.wVk = VK_MENU;
 
-        HWND focusedWindow = GetForegroundWindow();
-        if (focusedWindow == NULL) break;
+            // press Shift
+            inputs[1].type = INPUT_KEYBOARD;
+            inputs[1].ki.wVk = VK_SHIFT;
 
-        // send a message to the focused window that it is necessary
-        // to change the keyboard layout to the following one
-        PostMessage(focusedWindow, WM_INPUTLANGCHANGEREQUEST, 0, HKL_NEXT);
-        sync_scroll_lock_indicator();
+            // release Alt
+            inputs[2].type = INPUT_KEYBOARD;
+            inputs[2].ki.wVk = VK_MENU;
+            inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
 
-        return TRUE;
+            // release Shift
+            inputs[3].type = INPUT_KEYBOARD;
+            inputs[3].ki.wVk = VK_SHIFT;
+            inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
 
+            SendInput(4, inputs, sizeof(INPUT));
+
+            sync_scroll_lock_indicator();
+
+            // disable behavior of Caps Lock
+            return TRUE;
+        }
     } while (FALSE);
 
 	return CallNextHookEx(keyboard_hook_handle, nCode, wParam, lParam);
